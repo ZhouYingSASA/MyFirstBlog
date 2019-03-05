@@ -1,15 +1,18 @@
 from app import db
+from . import login_manager
+from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    name = db.Column(db.String(20), nullable=False)
+class Users(UserMixin, db.Model):
+    __tablename__ = 'Users'
+    u_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    admin = db.Column(db.Boolean, nullable=False, default=False)
-    com = db.relationship('Comment', backref='users')
+    com = db.relationship('Comment')
+    right = db.relationship('Right', backref='Users')
 
     @property
     def password(self):
@@ -23,29 +26,42 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<user %r>' % self.name
+        return '<User %r>' % self.name
+
+
+class Right(db.Model):
+    __tablename__ = "Right"
+    r_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    u_id = db.Column(db.Integer, db.ForeignKey('Users.u_id'))
+    r_name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(200))
 
 
 class Txt(db.Model):
-    __tablename__ = 'txt'
+    __tablename__ = 'Txt'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     title = db.Column(db.String(20), nullable=False)
     cont = db.Column(db.String(160), nullable=False)
     username = db.Column(db.String(20), nullable=False)
     time = db.Column(db.Text(20), nullable=False)
-    com = db.relationship('Comment', backref='txt')
+    com = db.relationship('Comment')
 
     def __repr__(self):
-        return '<activity %r>' % self.title
+        return '<Activity %r>' % self.title
 
 
 class Comment(db.Model):
-    __tablename__ = 'com'
+    __tablename__ = 'Comment'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    txtid = db.Column(db.Integer, db.ForeignKey('txt.id'))
+    txt_id = db.Column(db.Integer, db.ForeignKey('Txt.id'))
     cont = db.Column(db.String(160))
     time = db.Column(db.Text(20), nullable=False)
-    user = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.Column(db.Integer, db.ForeignKey('Users.u_id'))
 
     def __repr__(self):
-        return '<com %r>' % self.id
+        return '<Comment %r>' % self.id
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))

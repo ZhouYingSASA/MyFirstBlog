@@ -1,10 +1,11 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, request
+from flask_login import login_required
 from datetime import datetime
 from .. import db
-from ..models import User
+from ..models import Users
 from ..email import send_email
 from . import main
-from .forms import NameForm
+from .forms import NameForm, StringField
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -29,6 +30,12 @@ def user(name):
     return render_template('index.html', name=name, user_agent=user_agent)
 
 
+@login_required
+@main.route('/secret')
+def secret():
+    return "Only authenticated users are allowed."
+
+
 # @main.route('/db', methods=['GET', 'POST'])
 # def dbop():
 #     dbform = NameForm()
@@ -39,3 +46,8 @@ def user(name):
 @main.route('/baidu')
 def baidu():
     return redirect('https://www.baidu.com', 302, None)
+
+
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    pass
