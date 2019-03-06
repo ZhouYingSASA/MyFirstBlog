@@ -1,23 +1,26 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 from datetime import datetime
 from .. import db
 from ..models import Users
 from ..email import send_email
 from . import main
-from .forms import NameForm, StringField
+from .forms import NameForm, NoForm
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('你改名啦~')
-        session['name'] = form.name.data
-        return redirect(url_for('main.index'))
     user_agent = request.headers.get('user_agent')
+    if current_user.is_authenticated:
+        form = NoForm()
+    else:
+        form = NameForm()
+        if form.validate_on_submit():
+            old_name = session.get('name')
+            if old_name is not None and old_name != form.name.data:
+                flash('你改名啦~')
+            session['name'] = form.name.data
+            return redirect(url_for('main.index'))
     return render_template(
         'index.html', name=session.get('name'), form=form,
         user_agent=user_agent, current_time=datetime.utcnow()

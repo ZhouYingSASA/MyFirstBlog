@@ -1,11 +1,30 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Hello,{% if name %}{{name}}{% else %}Stranger{% endif%}!{% endblock %}
+{% block title %}
+Hello,
+{% if current_user.is_authenticated %}
+    {{ current_user.username }}
+{% else %}
+    {% if name %}
+        {{ name }}
+    {% else %}
+        Stranger
+    {% endif %}
+{% endif%}!
+{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1><b>你好, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</b></h1>
+    <h1><b>你好, {% if current_user.is_authenticated %}
+            {{ current_user.username }}
+        {% else %}
+            {% if name %}
+                {{ name }}
+            {% else %}
+                Stranger
+            {% endif %}
+        {% endif %}!</b></h1>
     <p>你的浏览器是：<i>{{ user_agent }}</i></p>
 </div>
 {{ wtf.quick_form(form) }}

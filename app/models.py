@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 class Users(UserMixin, db.Model):
     __tablename__ = 'Users'
-    u_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
@@ -32,7 +32,7 @@ class Users(UserMixin, db.Model):
 class Right(db.Model):
     __tablename__ = "Right"
     r_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    u_id = db.Column(db.Integer, db.ForeignKey('Users.u_id'))
+    u_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     r_name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(200))
 
@@ -56,7 +56,7 @@ class Comment(db.Model):
     txt_id = db.Column(db.Integer, db.ForeignKey('Txt.id'))
     cont = db.Column(db.String(160))
     time = db.Column(db.Text(20), nullable=False)
-    user = db.Column(db.Integer, db.ForeignKey('Users.u_id'))
+    user = db.Column(db.Integer, db.ForeignKey('Users.id'))
 
     def __repr__(self):
         return '<Comment %r>' % self.id
