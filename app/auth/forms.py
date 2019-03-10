@@ -20,12 +20,10 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField('再次输入密码', validators=[DataRequired()])
     submit = SubmitField('注册')
 
-    @staticmethod
-    def validate_email(field):
+    def validate_email(self, field):
         if Users.query.filter_by(email=field.data).first():
             raise ValidationError('该邮箱已注册！')
 
-    @staticmethod
-    def validate_username(field):
+    def validate_username(self, field):
         if Users.query.filter_by(username=field.data).first():
             raise ValidationError('用户名已存在！')
