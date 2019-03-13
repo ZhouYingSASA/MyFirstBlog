@@ -8,5 +8,6 @@ class NameForm(FlaskForm):
     submit = SubmitField('提交')
 
 
-class NoForm(FlaskForm):
-    pass
+class PostForm(FlaskForm):
+    body = TextAreaField('发表文章：', validators=[DataRequired()])
+    submit = SubmitField('发表')
