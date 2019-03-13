@@ -1,9 +1,6 @@
-from flask import render_template, session, redirect, url_for, current_app, flash, request
+from flask import render_template, session, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from datetime import datetime
-from .. import db
-from ..models import Users
-from ..email import send_email
 from . import main
 from .forms import NameForm, NoForm
 

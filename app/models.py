@@ -13,6 +13,7 @@ class Users(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     com = db.relationship('Comment')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
     right = db.relationship('Right', backref='Users')
 
     def generate_confirmation_token(self, expiration=3000):
@@ -54,13 +55,13 @@ class Right(db.Model):
     description = db.Column(db.String(200))
 
 
-class Txt(db.Model):
-    __tablename__ = 'Txt'
+class Post(db.Model):
+    __tablename__ = 'Post'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
     title = db.Column(db.String(20), nullable=False)
     cont = db.Column(db.String(160), nullable=False)
-    username = db.Column(db.String(20), nullable=False)
-    time = db.Column(db.Text(20), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    timestamp = db.Column(db.Text(20), nullable=False)
     com = db.relationship('Comment')
 
     def __repr__(self):
@@ -70,7 +71,7 @@ class Txt(db.Model):
 class Comment(db.Model):
     __tablename__ = 'Comment'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    txt_id = db.Column(db.Integer, db.ForeignKey('Txt.id'))
+    Post_id = db.Column(db.Integer, db.ForeignKey('Post.id'))
     cont = db.Column(db.String(160))
     time = db.Column(db.Text(20), nullable=False)
     user = db.Column(db.Integer, db.ForeignKey('Users.id'))

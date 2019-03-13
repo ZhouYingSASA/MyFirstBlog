@@ -20,7 +20,7 @@
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>
             </ul>
             <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.baidu') }}">百度</a></li>
+                <li><a href="{{ url_for('main.baidu') }}" target="_blank">百度</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
@@ -43,7 +43,7 @@
     </div>
     {% endfor %}
     {% block page_content %}{% endblock %}
-</div>
+</div><!--flash消息窗口-->
 {% endblock %}
 
 {% block scripts %}
